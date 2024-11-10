@@ -3,6 +3,7 @@
 
 using std::cout;
 using std::ostream;
+using std::istream;
 
 Child::Child() : _age(-1), _firstName(""), _lastName("") {  }
 
@@ -32,10 +33,19 @@ bool Child::operator==(const Child &toCompare) const {
 }
 
 bool Child::operator!=(const Child &toCompare) const {
-    return ((_lastName != toCompare._lastName) && (_firstName != toCompare._firstName) && (_age != toCompare._age));
+    return ((_lastName != toCompare._lastName) || (_firstName != toCompare._firstName) || (_age != toCompare._age));
 }
 
 ostream &operator<<(ostream &stream, const Child &child) {
     stream << child._firstName << child._lastName << child._age;
+    return stream;
+}
+
+istream &operator>>(istream &stream, Child &child) {
+    string firstName, lastName, age;
+    stream >> firstName >> lastName >> age;
+    child._firstName = firstName;
+    child._lastName = lastName;
+    child._age = stoi(age);
     return stream;
 }

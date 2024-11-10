@@ -5,6 +5,7 @@
 
 using std::cout;
 using std::ostream;
+using std::istream;
 using std::string;
 
 class Child {
@@ -17,6 +18,7 @@ class Child {
         Child(string firstName, string lastName, int age);
 
         friend ostream& operator<<(ostream &stream, const Child &child);
+        friend istream& operator>>(istream &stream, Child &child);
 
         bool operator<(const Child &toCompare) const;
         bool operator==(const Child &toCompare) const;
