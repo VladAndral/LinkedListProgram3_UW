@@ -9,30 +9,33 @@ using std::ostream;
 using std::ifstream;
 
 template <class T>
-List342<T>::List342() : _head(nullptr), _size(0){    }
+List342<T>::List342() : _head(nullptr), _size(0) {    }
 
 template <class T>
 List342<T>::List342(const List342 &listToCopy) : _head(nullptr), _size(0) { // we are copying listToCopy to this
-    Node<T> *currNode = listToCopy._head; // This will be out iterator
-    /* 
-        We are asked to create a copy of data and not just point to the same object.
-        If we simply do
-        T objectCopy = *(currnode->data)
-        
-        We are not allocating new memory; it will be lost/forgotten outside of this function call
-        
-        T *objectCopy = new T(*(currNode->data));
-        tells the computer to allocate new memory for this object (and remember it)
-        Since we are doing 'new', we must remember to 'delete' later!
-    */
-    T *objectCopy = new T(*(currNode->data));
-    Insert(objectCopy);
-    currNode = currNode->next;
-    while (currNode != nullptr) {
+    
+    if (listToCopy._head != nullptr) {
+        Node<T> *currNode = listToCopy._head; // This will be out iterator
+        /* 
+            We are asked to create a copy of data and not just point to the same object.
+            If we simply do
+            T objectCopy = *(currnode->data)
+            
+            We are not allocating new memory; it will be lost/forgotten outside of this function call
+            
+            T *objectCopy = new T(*(currNode->data));
+            tells the computer to allocate new memory for this object (and remember it)
+            Since we are doing 'new', we must remember to 'delete' later!
+        */
         T *objectCopy = new T(*(currNode->data));
         Insert(objectCopy);
         currNode = currNode->next;
-    } // Frankly, this is inefficient...('Insert' must iterate thru whole list)
+        while (currNode != nullptr) {
+            T *objectCopy = new T(*(currNode->data));
+            Insert(objectCopy);
+            currNode = currNode->next;
+        } // Frankly, this is inefficient...('Insert' must iterate thru whole list)
+    }
 }
 
 template <class T>
@@ -126,7 +129,7 @@ bool List342<T>::Remove(T target, T &result) {
             In our case, Nodes are created with new (see Insert() method), but not 'data'. 
         */
        /*
-            Now we do need to 'delete' *data, since we must create 'new' T(...) to copy object
+            ...But now we do need to 'delete' *data, since we must create 'new' T(...) to copy object
         */
         
         delete temp; // To prevent memory leaks!
@@ -166,7 +169,7 @@ bool List342<T>::Remove(T target, T &result) {
 
 template <class T>
 bool List342<T>::Peek(T target, T &result) const {
-        if (_head == nullptr) {
+    if (_head == nullptr) {
         return false;
     } else if (_head->next == nullptr) {
         if (*(_head->data) == target) { // data is a pointer
@@ -326,9 +329,13 @@ List342<T> List342<T>::operator=(const List342 &list) { // we are copying 'list'
 // }
 
 int main(int argc, char *argv[]) {
+    
     string input = argv[1];
-    bool isNone = input.compare("none");
-    if (isNone) {
+    // cout << input;
+    int isNotNone = input.compare("none");
+    // cout << isNotNone;
+
+    if (isNotNone) { // if strings are equal, 0
         List342<Child> class1;
         class1.BuildList(argv[1]);
         cout << "class1: " << class1 << endl;
