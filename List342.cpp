@@ -261,7 +261,7 @@ List342<T> List342<T>::operator+(const List342 &list) const {
     bool reachedEndOfAList = ((thisPointer == nullptr) || (toAddPointer == nullptr));
     
     while (!reachedEndOfAList) {
-        if (*(thisPointer->data) > *(toAddPointer->data)) { // List342 insert method handles duplicates
+        if (*(thisPointer->data) < *(toAddPointer->data)) { // List342 insert method handles duplicates
             toReturn.Insert(thisPointer->data);
             thisPointer = thisPointer->next;
         } else {
