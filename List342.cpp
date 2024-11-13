@@ -130,6 +130,14 @@ bool List342<T>::Remove(T target, T &result) {
         */
        /*
             ...But now we do need to 'delete' *data, since we must create 'new' T(...) to copy object
+
+            Rule-of-thumb:
+                int x = 5;
+                int *px = &x;
+                // No delete
+
+                Dog *fluff = new Dog(...);
+                delete fluff; // ** Allocated with new, so delete **
         */
         
         delete temp; // To prevent memory leaks!
@@ -231,21 +239,51 @@ int List342<T>::Size() const {
 
 template <class T>
 List342<T> List342<T>::operator+(const List342 &list) const {
+
     List342<T> *toReturnPointer = new List342<T>();
     List342<T> toReturn = *toReturnPointer;
 
-    toReturn = list;
+    // toReturn = list;
     
-    if (_head != nullptr) {
-        Node<T> currPointer = _head;
-        toReturn.Insert(currPointer->data);
-        currPointer = currPointer->next;
-        while (currPointer != nullptr) {
-            toReturn.Insert(currPointer->data);
-            currPointer = currPointer->next;            
+    // if (_head != nullptr) {
+    //     Node<T> currPointer = _head;
+    //     toReturn.Insert(currPointer->data);
+    //     currPointer = currPointer->next;
+    //     while (currPointer != nullptr) {
+    //         toReturn.Insert(currPointer->data);
+    //         currPointer = currPointer->next;            
+    //     }
+    // }
+
+    Node<T> *thisPointer = _head;
+    Node<T> *toAddPointer = list._head;
+
+    bool reachedEndOfAList = ((thisPointer == nullptr) || (toAddPointer == nullptr));
+    
+    while (!reachedEndOfAList) {
+        if (*(thisPointer->data) > *(toAddPointer->data)) { // List342 insert method handles duplicates
+            toReturn.Insert(thisPointer->data);
+            thisPointer = thisPointer->next;
+        } else {
+            toReturn.Insert(toAddPointer->data);
+            toAddPointer = toAddPointer->next;
+        }
+        
+        reachedEndOfAList = ((thisPointer == nullptr) || (toAddPointer == nullptr));
+    }
+
+    if (thisPointer == nullptr) {
+        while (toAddPointer != nullptr) {
+            toReturn.Insert(toAddPointer->data);
+            toAddPointer = toAddPointer->next;
+        }
+    } else {
+        while (thisPointer != nullptr) {
+            toReturn.Insert(thisPointer->data);
+            thisPointer = thisPointer->next;
         }
     }
-    
+
     return toReturn;
 }
 
@@ -284,21 +322,22 @@ bool List342<T>::operator==(const List342 &list) const {
 
 template <class T>
 bool List342<T>::operator!=(const List342 &list) const {
-        if (list.Size == _size) {
-        if (_head == nullptr) {
-            return (list._head != nullptr);
-        }
-        Node<T> *thisListIterator = _head;
-        Node<T> *listToCompateIterator = list._head;
-        while (thisListIterator != nullptr) {
-            if (*(thisListIterator->data) != *(listToCompateIterator->data)) {
-                return true;
-            }
-            thisListIterator = thisListIterator->next;
-            listToCompateIterator = listToCompateIterator->next;
-        }
-        return false;
-    } else return true;
+    //     if (list.Size == _size) {
+    //     if (_head == nullptr) {
+    //         return (list._head != nullptr);
+    //     }
+    //     Node<T> *thisListIterator = _head;
+    //     Node<T> *listToCompateIterator = list._head;
+    //     while (thisListIterator != nullptr) {
+    //         if (*(thisListIterator->data) != *(listToCompateIterator->data)) {
+    //             return true;
+    //         }
+    //         thisListIterator = thisListIterator->next;
+    //         listToCompateIterator = listToCompateIterator->next;
+    //     }
+    //     return false;
+    // } else return true;
+    return !(*this == list);
 }
 
 template <class T>
