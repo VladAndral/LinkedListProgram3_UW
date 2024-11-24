@@ -78,7 +78,13 @@ bool List342<T>::Insert(T *object) {
         create a new Node!! You only created a new object!!!
     */
 
-    Node<T> *toInsert = new Node<T>; // Follow this structure when creating new Nodes; *create NEW* Node object, then manually add data
+    /* 
+        Follow this structure when creating new Nodes; *create NEW* Node object, then manually add data
+        Also, when creating 'new ...', what you get is a POINTER to that object;
+        Node<T> toInsert = new Node<T>; is WRONG. toInsert should be of type Node<T>*
+
+    */
+    Node<T> *toInsert = new Node<T>; 
     T *copyOfObject = new T(*object); // Copy constructor invoked, 'copyOfObject' is instantiated as a pointer to the new object
     toInsert->data = copyOfObject; // Create a copy of the object, then set data to a pointer to the copy (project guidelines)
 
@@ -219,8 +225,9 @@ void List342<T>::DeleteList() {
 }
 
 template <class T>
-bool List342<T>::Merge(List342 &listToMergeWith) {
+bool List342<T>::Merge(List342 &listToMergeWith) { // 'listToMergeWith' is merged into 'this' and emptied
     if (this != &listToMergeWith) { // 'this' is a pointer! *this is a dereference!
+    // We don't need to check for content equality because the 'Insert' method handles duplicates
         while (listToMergeWith.Size()) {
             T *topItem = listToMergeWith._head->data;
             Insert(topItem);
@@ -342,18 +349,20 @@ bool List342<T>::operator!=(const List342 &list) const {
 
 template <class T>
 List342<T> List342<T>::operator=(const List342 &list) { // we are copying 'list' to this
+    // TODO create new list object and return a reference to it
+    List342 *toReturn = new List342<T>();
     if (list.Size()) {
         Node<T> *currPointer = list._head;
         T *currObjCopy = new T(*(currPointer->data));
-        Insert(currObjCopy);
+        toReturn->Insert(currObjCopy);
         currPointer = currPointer->next;
         while (currPointer != nullptr) {
             T *currObjCopy = new T(*(currPointer->data));
-            Insert(currObjCopy);
+            toReturn->Insert(currObjCopy);
             currPointer = currPointer->next;
         }
     }
-    return *this; // return a reference (dereference pointer to a reference/object)
+    return *toReturn; // return a reference (dereference pointer to a reference/object)
 }
 
 // template <class T>
@@ -369,12 +378,12 @@ List342<T> List342<T>::operator=(const List342 &list) { // we are copying 'list'
 
 int main(int argc, char *argv[]) {
     
-    string input = argv[1];
-    // cout << input;
-    int isNotNone = input.compare("none");
-    // cout << isNotNone;
+    // string input = argv[1];
+    // // cout << input;
+    // int isNotNone = input.compare("none");
+    // // cout << isNotNone;
 
-    if (isNotNone) { // if strings are equal, 0
+    if (argc > 1) { // if strings are equal, 0
         List342<Child> class1;
         class1.BuildList(argv[1]);
         cout << "class1: " << class1 << endl;
